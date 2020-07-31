@@ -9,11 +9,15 @@ import time
 n = int(input("n="))                                 # N宫格边长)
 nn = n * n                                           # N宫格总格子数（即N）
 n_square = [[0 for i in range(n)]for j in range(n)]  # N宫格值列表
+judge_number = 0                                     # 试算判断的次数
 
 svoes = 0
 for i in range(1, nn + 1):
     svoes += i
 svoes = int(svoes / n)  # Sum value of each side 每边（列、斜对角）的和值
+
+
+judge_number = 0
 
 
 def next_cell(row, cloumn):
@@ -29,61 +33,64 @@ def judge(value, n_square, row, cloumn):
     # 如果在row,cloumn填入value，返回N宫格中是否有错误
     # 返回值之前，将row,cloumn恢复为0
 
+    global judge_number  # 声明这个judge_number是全局变量
+    judge_number += 1
+
     n_square[row][cloumn] = value
 
-    # 每一行中是否有错误
+    # 所在行中是否造成错误
+    count, sum = 0, 0  # 一行中的非0数字个数，一行中的数字之和
     for i in range(n):
-        count, sum = 0, 0  # 一行中的非0数字个数，一行中的数字之和
-        for j in range(n):
-            if n_square[i][j] != 0:
-                count += 1
-            sum += n_square[i][j]
-        if sum > svoes:
-            n_square[row][cloumn] = 0
-            return False
-        if count == n and sum != svoes:
-            n_square[row][cloumn] = 0
-            return False
+        if n_square[row][i] != 0:
+            count += 1
+        sum += n_square[row][i]
+    if sum > svoes:
+        n_square[row][cloumn] = 0
+        return False
+    if count == n and sum != svoes:
+        n_square[row][cloumn] = 0
+        return False
 
-    # 每一列中是否有错误
-    for j in range(n):
-        count, sum = 0, 0
-        for i in range(n):
-            if n_square[i][j] != 0:
-                count += 1
-            sum += n_square[i][j]
-        if sum > svoes:
-            n_square[row][cloumn] = 0
-            return False
-        if count == n and sum != svoes:
-            n_square[row][cloumn] = 0
-            return False
+    # 所在列中是否造成错误
+    count, sum = 0, 0
+    for i in range(n):
+        if n_square[i][cloumn] != 0:
+            count += 1
+        sum += n_square[i][cloumn]
+    if sum > svoes:
+        n_square[row][cloumn] = 0
+        return False
+    if count == n and sum != svoes:
+        n_square[row][cloumn] = 0
+        return False
 
     # 判断左上右下对角线是否有错误
-    count, sum = 0, 0
-    for i in range(n):
-        if n_square[i][i] != 0:
-            count += 1
-        sum += n_square[i][i]
-    if sum > svoes:
-        n_square[row][cloumn] = 0
-        return False
-    if count == n and sum != svoes:
-        n_square[row][cloumn] = 0
-        return False
+    if row == cloumn:
+        count, sum = 0, 0
+        for i in range(n):
+            if n_square[i][i] != 0:
+                count += 1
+            sum += n_square[i][i]
+        if sum > svoes:
+            n_square[row][cloumn] = 0
+            return False
+        if count == n and sum != svoes:
+            n_square[row][cloumn] = 0
+            return False
 
     # 判断右上左下对角线是否有错误
-    count, sum = 0, 0
-    for i in range(n):
-        if n_square[i][n-1-i] != 0:
-            count += 1
-        sum += n_square[i][n-1-i]
-    if sum > svoes:
-        n_square[row][cloumn] = 0
-        return False
-    if count == n and sum != svoes:
-        n_square[row][cloumn] = 0
-        return False
+    if row == n-1-cloumn:
+        count, sum = 0, 0
+        for i in range(n):
+            if n_square[i][n-1-i] != 0:
+                count += 1
+            sum += n_square[i][n-1-i]
+        if sum > svoes:
+            n_square[row][cloumn] = 0
+            return False
+        if count == n and sum != svoes:
+            n_square[row][cloumn] = 0
+            return False
 
     n_square[row][cloumn] = 0
     return True
@@ -140,3 +147,4 @@ for i in range(n):
     print(n_square[i])
 
 print("用时：", time_spend, "s")
+print("判定次数：", judge_number)
