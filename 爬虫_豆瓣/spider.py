@@ -115,9 +115,5 @@ def askUrl(url):
     return html
 
 
-def saveData(savePath):
-    pass
-
-
 if __name__ == "__main__":
     main()
